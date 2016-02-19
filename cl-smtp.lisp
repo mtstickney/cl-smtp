@@ -33,7 +33,7 @@
     (error "the \"~A\" argument is not a string or cons" name))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defvar *return-newline* #.(format nil "~C~C" #\Return #\NewLine)))
+  (defvar *return-newline* #.(format nil "~C~C" #\Return #\Linefeed)))
 
 (defun mask-dot (str)
    "Replace all occurences of single line #\. with #\.#\." 
