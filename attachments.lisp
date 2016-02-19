@@ -48,8 +48,8 @@
 
 (defun generate-multipart-header (sock boundary &key (multipart-type "mixed"))
   (write-to-smtp sock 
-                 (format nil "Content-type: multipart/~a;~%~tBoundary=\"~a\"" 
-                         multipart-type boundary)))
+                 (format nil "Content-type: multipart/~a;~a~tBoundary=\"~a\"" 
+                         multipart-type *return-newline* boundary)))
 
 (defun generate-message-header (sock 
 				&key boundary ;; uniques string of character -- see make-random-boundary 
@@ -104,16 +104,19 @@
     (generate-message-header 
      sock 
      :boundary boundary
-     :content-type (format nil "~A;~%~tname*=~A;~%~tname=\"~A\""
+     :content-type (format nil "~A;~a~tname*=~A;~a~tname=\"~A\""
 			   (attachment-mime-type attachment)
-			   quoted-name* quoted-name)
+			   *return-newline*
+			   quoted-name*
+			   *return-newline*
+			   quoted-name)
      :content-transfer-encoding "base64"
      :content-disposition (format nil "attachment; filename*=~A; filename=\"~A\""
 				  quoted-name* quoted-name))))
 
 (defun send-end-marker (sock boundary)
   ;; Note the -- at beginning and end of boundary is required
-  (write-to-smtp sock (format nil "~%--~a--~%" boundary)))
+  (write-to-smtp sock (format nil "~a--~a--~a" *return-newline* boundary *return-newline*)))
 
 (defclass attachment ()
   ((name :initarg :name
