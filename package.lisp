@@ -34,7 +34,8 @@
 	   "ATTACHMENT-MIME-TYPE"
            "RFC2045-Q-ENCODE-STRING"
            "RFC2231-ENCODE-STRING"
-           "WRITE-RFC8822-MESSAGE"))
+           "WRITE-RFC8822-MESSAGE")
+  (:export "SEND-BASE64-DATA"))
 
 (in-package :cl-smtp)
 

@@ -152,11 +152,16 @@
 (defmethod attachment-mime-type ((attachment string))
   (lookup-mime-type attachment))
 
+(defgeneric send-base64-data (attachment sock &key buffer-size wrap-at-column)
+  (:method ((attachment attachment) sock &key (buffer-size 256) (wrap-at-column 76))
+    (base64-encode-file (attachment-data-pathname attachment)
+                        sock
+                        :buffer-size buffer-size
+                        :wrap-at-column wrap-at-column)))
+
 (defun send-attachment (sock attachment boundary buffer-size external-format)
   (send-attachment-header sock boundary attachment external-format)
-  (base64-encode-file (attachment-data-pathname attachment)
-		      sock
-		      :buffer-size buffer-size))
+  (send-base64-data attachment sock :buffer-size buffer-size :wrap-at-column 76))
 
 (defun base64-encode-file (file-in sock
                                    &key 
