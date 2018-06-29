@@ -417,7 +417,17 @@
    connection is then terminated by sending a QUIT command."
   (write-to-smtp stream "")
   (smtp-command stream "." 250)
-  (smtp-command stream "QUIT" 221))
+  ;; We expect the server to close the connection after receiving the
+  ;; QUIT verb. Some servers are dumb and use a TCP reset to close the
+  ;; connection, which might discard the status line if we haven't
+  ;; read it out of the buffer when the RST arrives. Since we were
+  ;; expecting the connection to be closed anyway, if we get
+  ;; END-OF-FILE while reading the status line, make a rude gesture at
+  ;; the server and take the win.
+  (handler-case
+      (smtp-command stream "QUIT" 221)
+    ;; FIXME: is it API breakage to return a list with no elements?
+    (end-of-file () nil)))
 
 (defun send-mail-headers (stream
                           &key from to cc reply-to
