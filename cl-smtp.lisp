@@ -282,8 +282,10 @@
   ((features :initarg :features :reader features))
   (:report (lambda (condition stream)
              (print-unreadable-object (condition stream :type t)
-               (format stream "SMTP authentication has been requested, but the SMTP server did not advertise any ~
-                               supported authentication scheme.  Features announced: ~{~S~^, ~}"
+               (format stream (concatenate 'string
+                                           "SMTP authentication has been requested, but the SMTP server did not"
+                                           " advertise any supported authentication scheme."
+                                           "  Features announced: ~{~S~^, ~}")
                        (features condition))))))
 
 (defun smtp-authenticate (stream authentication features)
